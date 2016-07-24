@@ -78,21 +78,6 @@ Initially we kicked off the prototype with the `STM32F4Discovery board` together
 
 The size of Tinq and NuttX together made us switch into a board with more capacity the STM3240G-eval.
 
-####STM3240G-eval 
-
-
-The STM3240G-eval board includes additional 2 MB SRAM. In order to set it up, connect the USB (flashing purposes, ST-Link), the Ethernet cable, the power connector and finally a 3.3V USB to serial cable:
-![](https://www.olimex.com/Products/Components/Cables/USB-Serial-Cable/USB-Serial-Cable-F/images/USB-SERIAL-CABLE.png)
-
-The `TX`, `RX` and `GND` signals should be connected to `CN4` pins `36`, `35` and `39` respectively.
-
-
-To get a serial console type:
-```bash
- sudo screen /dev/ttyUSB0 115200
-```
-
-(assuming that `/dev/ttyUSB0` is the new device that appears when connecting the USB to serial cable)
 
 ###Setting it up
 
@@ -326,5 +311,3 @@ Applications are coded at `apps/ros`. Refer to `apps/ros/publisher` for an examp
 - The implementation does not support different message types with the same topic name ([issue](https://github.com/ros2/ros2_embedded_nuttx/issues/27)). Refer to the [discussion](https://github.com/brunodebus/tinq-core/issues/7#issuecomment-62636116).
 - Tinq implementation does not interoperate with RTI's Connext. Refer to the [issue](https://github.com/ros2/ros2_embedded_nuttx/issues/26).
 
- 
-![](http://www.osrfoundation.org/wordpress/wp-content/uploads/2014/07/osrf_masthead.png)
