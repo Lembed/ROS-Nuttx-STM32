@@ -1,4 +1,4 @@
-ROS 2.0 NuttX prototype
+#ROS Nuttx STM32
 -------------
 
 This repository prototypes ROS 2.0 for embedded systems using NuttX, Tinq and the STM32F4 IC.
@@ -31,21 +31,6 @@ This repository prototypes ROS 2.0 for embedded systems using NuttX, Tinq and th
  The prototype has been built in a modular way using the following blocks:
 
 ```
-                                        
-                              ......    
-.....   .....   .....     ............. 
-....'  ......  .......    ...       ....
-....     ...     ...                 ...
-                                    ....
-.....  ......   .....             ..... 
-.....  ......  .......           .....  
-                              ......    
-  .                          .....      
-.....  ......  ......      ......       
-.....  .....'  ......     ..............
-.                                      .
-                                        
-
 ----------------------------------
 |           application           |
 ----------------------------------
@@ -91,20 +76,16 @@ __________________________________
 ####STM32F4Discovery board
 Initially we kicked off the prototype with the `STM32F4Discovery board` together with the `STM32F4-BB` (this daugher board provides Ethernet). The board is connected to the computer using USB. This connection is used to power up the board, program and debug (through STLINK). `PD5`, `PD6` and `GND` are used as the serial connection (for development and debugging purposes, NSH, etc). An Ethernet cable is connected from the `STM32F4-BB` to the working station.
 
-![](misc/images/IMG_20141030_171923.jpg)
-
 The size of Tinq and NuttX together made us switch into a board with more capacity the STM3240G-eval.
 
 ####STM3240G-eval 
 
-![](misc/images/IMG_20141030_171929.jpg)
 
 The STM3240G-eval board includes additional 2 MB SRAM. In order to set it up, connect the USB (flashing purposes, ST-Link), the Ethernet cable, the power connector and finally a 3.3V USB to serial cable:
 ![](https://www.olimex.com/Products/Components/Cables/USB-Serial-Cable/USB-Serial-Cable-F/images/USB-SERIAL-CABLE.png)
 
 The `TX`, `RX` and `GND` signals should be connected to `CN4` pins `36`, `35` and `39` respectively.
 
-![](misc/images/IMG_20141030_171934.jpg)
 
 To get a serial console type:
 ```bash
@@ -178,40 +159,6 @@ make
 To program the board:
 ```bash
 make program
-```
-
-The output should look like:
-```bash
-make program
-../tools/openocd/bin/openocd -f board/stm32f4discovery.cfg -c "init" -c "reset halt" -c "flash write_image erase nuttx.bin 0x08000000 bin" -c "verify_image nuttx.bin 0x8000000; reset run; exit"
-Open On-Chip Debugger 0.9.0-dev-00112-g1fa24eb (2014-08-19-11:23)
-Licensed under GNU GPL v2
-For bug reports, read
-    http://openocd.sourceforge.net/doc/doxygen/bugs.html
-Info : The selected transport took over low-level target control. The results might differ compared to plain JTAG/SWD
-adapter speed: 1000 kHz
-adapter_nsrst_delay: 100
-srst_only separate srst_nogate srst_open_drain connect_deassert_srst
-Info : clock speed 1000 kHz
-Info : STLINK v2 JTAG v17 API v2 SWIM v0 VID 0x0483 PID 0x3748
-Info : using stlink api v2
-Info : Target voltage: 3.242300
-Info : stm32f4x.cpu: hardware has 6 breakpoints, 4 watchpoints
-target state: halted
-target halted due to debug-request, current mode: Thread 
-xPSR: 0x01000000 pc: 0x080004b0 msp: 0x2000ce18
-auto erase enabled
-Info : device id = 0x10016413
-Info : flash size = 1024kbytes
-target state: halted
-target halted due to breakpoint, current mode: Thread 
-xPSR: 0x61000000 pc: 0x20000042 msp: 0x2000ce18
-wrote 655360 bytes from file nuttx.bin in 23.653700s (27.057 KiB/s)
-target state: halted
-target halted due to breakpoint, current mode: Thread 
-xPSR: 0x61000000 pc: 0x2000002e msp: 0x2000ce18
-verified 646286 bytes in 5.552209s (113.673 KiB/s)
-make: [program] Error 1 (ignored)
 ```
 
 ##### Serial console
@@ -329,71 +276,6 @@ tree -L 1
 - **stlink**: a modified version of stlink compatible with the implementations.
 - **tools**: a set of useful tools for development.
 
-
-### DDS Debug Shell
-
-[Tinq's]() DDS implemmentation comes together with a `DDS Debug Shell` that has proved to be terribly useful to debug problems when working with DDS. The shell can be used prepending `!!` to any of the available commands:
-
-```bash
-!!help
-Following commands are available:
-    ssys                  Display system-specific data.
-    stimer                Display the timers.
-    sstr                  Display the string cache.
-    spool                 Display the pools.
-    spoola                Display the pools (extended).
-    scx [<cx>]            Display connections.
-    scxa [<cx>]           Display connections (extended).
-    scxq                  Display queued connections.
-    sloc                  Display locators.
-    sconfig               Display configuration data.
-    sdomain <d> <lf> <rf> Display domain (d) info.
-                          <lf> and <rf> are bitmaps for local/remote info.
-                          1=Locator, 2=Builtin, 4=Endp, 8=Type, 10=Topic.
-    sdisc                 Display discovery info.
-    sdisca                Display all discovery info (sdisc + endpoints)
-    stype [<name>]        Display Type information.
-    sqos                  Display QoS parameters.
-    stopic <d> [<name>]   Display Topic information.
-    sendpoints            Display the DCPS/RTPS Readers/Writers.
-    scache <ep>           Display an RTPS Endpoint Cache.
-    sdcache <ep>          Display a DCPS Endpoint Cache.
-    qcache <ep> [<query>] Query cache data of the specified endpoint:
-                          where: <ep>: endpoint, <query>: SQL Query string.
-    sproxy [<ep>]         Display Proxy contexts.
-    rproxy [<ep>]         Restart Proxy context.
-    seqos <ep>            Display endpoint QoS parameters.
-    scrypto <ep>          Display entity crypto parameters.
-    sscache               Display security cache.
-    rehs                  Request a rehandshake.
-    srx                   Display the RTPS Receiver context.
-    stx                   Display the RTPS Transmitter context.
-    sfd                   Display the status of the file descriptors.
-    asp <d>               Assert participant.
-    ase <ep>              Assert writer endpoint.
-    dtls                  Display DTLS connection related info.
-    spdb                  Display the policy database.
-    sfwd                  Display the forwarder state.
-    ftrace <n>            Start forwarder tracing for <n> events.
-    d [<p> [<n>]]         Dump memory.
-    da [<p> [<n>]]        Dump memory in ASCII.
-    db [<p> [<n>]]        Dump memory in hex bytes.
-    ds [<p> [<n>]]        Dump memory in hex 16-bit values.
-    dl [<p> [<n>]]        Dump memory in hex 32-bit values.
-    dm [<p> [<n>]]        Dump memory in mixed hex/ASCII.
-    indent <tab> <n>      Set indent type (if <tab>=1: use TABs).
-    taflags <flags>       Set type attribute display flags.
-                          <flags>: 1=header, 2=size, 4=elsize, 8=ofs.
-    server [<port>]       Start debug server on the given port.
-    env                   Display configuration data (=sconf).
-    set <var> <value>     Set the configuration variable to given value.
-    unset <var>           Unset the configuration variable.
-    suspend <value>       Suspend with given mode.
-    activate <value>      Activate with given mode.
-    help                  Display general help.
-    exit                  Close remote connection.
-
-```
 
 ### ROS Client Library
 The [ROS Client Library](rcl/README.md) (rcl) for embedded (implemented under the `rcl` directory) allows to code ROS applications using the ROS 2 API. Refer to [rcl.h](rcl/rcl.h) for a list of functions.
