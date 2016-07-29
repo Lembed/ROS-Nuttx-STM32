@@ -22,6 +22,7 @@ RUN dpkg --add-architecture i386 && \
     make git \
     sudo curl less vim-tiny tree openssh-server
 
+RUN apt-get install -y libxml2-dev pkg-config picocom screen libusb-1.0-0-dev autotools-dev autoconf gperf flex bison libncurses5-dev libtool
 RUN apt-get install -y --force-yes gcc-arm-none-eabi=$TOOLCHAIN_VERSION 
 RUN apt-get install -y  cmake  make  automake  python-setuptools  ninja-build  python-dev  libffi-dev  libssl-dev  software-properties-common python-software-properties
 RUN apt-get -y upgrade
@@ -30,11 +31,11 @@ RUN apt-get -y upgrade
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 RUN mkdir -p /var/run/sshd
-RUN useradd -G sudo --create-home --shell /bin/bash --user-group gaembed
-RUN echo "gaembed:gaembed" | chpasswd
+RUN useradd -G sudo --create-home --shell /bin/bash --user-group ros
+RUN echo "ros:ros" | chpasswd
 
 CMD ["/usr/sbin/sshd", "-D"]
 EXPOSE 22
 
-ENV GAE_WORKSPACE /home/gaembed/workspace
-VOLUME ${GAE_WORKSPACE}
+ENV ROS_WORKSPACE /home/ros/workspace
+VOLUME ${ROS_WORKSPACE}
