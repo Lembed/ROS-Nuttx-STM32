@@ -49,8 +49,8 @@ typedef struct qeo_event_reader_s qeo_event_reader_t;
  * \param[in] userdata Opaque user data as provided during reader creation.
  */
 typedef void (*qeo_event_on_data_callback)(const qeo_event_reader_t *reader,
-                                           const void *data,
-                                           uintptr_t userdata);
+    const void *data,
+    uintptr_t userdata);
 
 /**
  * Called when there are no more samples in the current burst.
@@ -64,7 +64,7 @@ typedef void (*qeo_event_on_data_callback)(const qeo_event_reader_t *reader,
  * \param[in] userdata Opaque user data as provided during reader creation.
  */
 typedef void (*qeo_event_on_no_more_data_callback)(const qeo_event_reader_t *reader,
-                                                   uintptr_t userdata);
+    uintptr_t userdata);
 
 /**
  * Callback called whenever the policy for a reader is being updated.  This
@@ -83,17 +83,17 @@ typedef void (*qeo_event_on_no_more_data_callback)(const qeo_event_reader_t *rea
  *                           reader's policy.
  */
 typedef qeo_policy_perm_t (*qeo_event_reader_on_policy_update_callback)(const qeo_event_reader_t *reader,
-                                                                        const qeo_policy_identity_t *identity,
-                                                                        uintptr_t userdata);
+    const qeo_policy_identity_t *identity,
+    uintptr_t userdata);
 
 /**
  * Event reader listener callback structure.  Upon reception of new data or
  * policy updates the appropriate callbacks (if provided) will be called.
  */
 typedef struct {
-    qeo_event_on_data_callback on_data; /**< see ::qeo_event_on_data_callback */
-    qeo_event_on_no_more_data_callback on_no_more_data; /**< see ::qeo_event_on_no_more_data_callback */
-    qeo_event_reader_on_policy_update_callback on_policy_update; /**< see ::qeo_event_reader_on_policy_update_callback */
+  qeo_event_on_data_callback on_data; /**< see ::qeo_event_on_data_callback */
+  qeo_event_on_no_more_data_callback on_no_more_data; /**< see ::qeo_event_on_no_more_data_callback */
+  qeo_event_reader_on_policy_update_callback on_policy_update; /**< see ::qeo_event_reader_on_policy_update_callback */
 } qeo_event_reader_listener_t;
 
 /**
@@ -112,9 +112,9 @@ typedef struct {
  * \see ::qeo_event_reader_close
  */
 qeo_event_reader_t *qeo_factory_create_event_reader(const qeo_factory_t *factory,
-                                                    const DDS_TypeSupport_meta *type,
-                                                    const qeo_event_reader_listener_t *listener,
-                                                    uintptr_t userdata);
+    const DDS_TypeSupport_meta *type,
+    const qeo_event_reader_listener_t *listener,
+    uintptr_t userdata);
 
 /**
  * Closes the reader, relinquishing any underlying resources.
@@ -167,15 +167,15 @@ typedef struct qeo_event_writer_s qeo_event_writer_t;
  *                           writer's policy.
  */
 typedef qeo_policy_perm_t (*qeo_event_writer_on_policy_update_callback)(const qeo_event_writer_t *writer,
-                                                                        const qeo_policy_identity_t *identity,
-                                                                        uintptr_t userdata);
+    const qeo_policy_identity_t *identity,
+    uintptr_t userdata);
 
 /**
  * Event writer listener callback structure.  Upon reception of policy updates
  * the appropriate callbacks (if provided) will be called.
  */
 typedef struct {
-    qeo_event_writer_on_policy_update_callback on_policy_update; /**< see ::qeo_event_writer_on_policy_update_callback */
+  qeo_event_writer_on_policy_update_callback on_policy_update; /**< see ::qeo_event_writer_on_policy_update_callback */
 } qeo_event_writer_listener_t;
 
 /**
@@ -192,9 +192,9 @@ typedef struct {
  * \see ::qeo_event_writer_close
  */
 qeo_event_writer_t *qeo_factory_create_event_writer(const qeo_factory_t *factory,
-                                                    const DDS_TypeSupport_meta *type,
-                                                    const qeo_event_writer_listener_t *listener,
-                                                    uintptr_t userdata);
+    const DDS_TypeSupport_meta *type,
+    const qeo_event_writer_listener_t *listener,
+    uintptr_t userdata);
 
 /**
  * Closes the writer, relinquishing any underlying resources.
@@ -246,27 +246,27 @@ typedef struct qeo_state_reader_s qeo_state_reader_t;
  * \param[in] userdata Opaque user data as provided during reader creation.
  */
 typedef void (*qeo_state_on_update_callback)(const qeo_state_reader_t *reader,
-                                             uintptr_t userdata);
+    uintptr_t userdata);
 
 /**
  * \copydoc ::qeo_event_reader_on_policy_update_callback
  */
 typedef qeo_policy_perm_t (*qeo_state_reader_on_policy_update_callback)(const qeo_state_reader_t *reader,
-                                                                        const qeo_policy_identity_t *identity,
-                                                                        uintptr_t userdata);
+    const qeo_policy_identity_t *identity,
+    uintptr_t userdata);
 
 /**
  * State reader listener callback structure.  Upon reception of new data the
  * appropriate callbacks (if provided) will be called.
  */
 typedef struct {
-    qeo_state_on_update_callback on_update; /**< see ::qeo_state_on_update_callback */
-    qeo_state_reader_on_policy_update_callback on_policy_update; /**< see ::qeo_state_reader_on_policy_update_callback */
+  qeo_state_on_update_callback on_update; /**< see ::qeo_state_on_update_callback */
+  qeo_state_reader_on_policy_update_callback on_policy_update; /**< see ::qeo_state_reader_on_policy_update_callback */
 } qeo_state_reader_listener_t;
 
 /**
  * Create a new Qeo state reader for the given type.
- * 
+ *
  * \param[in] factory  The factory to be used for creating the reader.
  * \param[in] type     The type for which to create the reader (non-\c NULL).
  * \param[in] listener The listener to use for data reception notifications.
@@ -280,9 +280,9 @@ typedef struct {
  * \see ::qeo_state_reader_close
  */
 qeo_state_reader_t *qeo_factory_create_state_reader(const qeo_factory_t *factory,
-                                                    const DDS_TypeSupport_meta *type,
-                                                    const qeo_state_reader_listener_t *listener,
-                                                    uintptr_t userdata);
+    const DDS_TypeSupport_meta *type,
+    const qeo_state_reader_listener_t *listener,
+    uintptr_t userdata);
 
 /**
  * Closes the reader, relinquishing any underlying resources.
@@ -315,7 +315,7 @@ typedef qeo_iterate_action_t (*qeo_iterate_callback)(const void *data, uintptr_t
  * \param[in] cb       Callback to be called for each instance.
  * \param[in] userdata Opaque user data that will be passed to the callback
  *                     (an integer or \c void pointer).
- *                         
+ *
  * \retval ::QEO_OK on success
  * \retval ::QEO_EINVAL in case of invalid arguments
  * \retval ::QEO_EFAIL in case reading failed
@@ -349,8 +349,8 @@ typedef struct qeo_state_change_reader_s qeo_state_change_reader_t;
  * \param[in] userdata Opaque user data as provided during reader creation.
  */
 typedef void (*qeo_state_on_data_callback)(const qeo_state_change_reader_t *reader,
-                                           const void *data,
-                                           uintptr_t userdata);
+    const void *data,
+    uintptr_t userdata);
 
 /**
  * Called when there are no more samples in the current burst.
@@ -364,7 +364,7 @@ typedef void (*qeo_state_on_data_callback)(const qeo_state_change_reader_t *read
  * \param[in] userdata Opaque user data as provided during reader creation.
  */
 typedef void (*qeo_state_on_no_more_data_callback)(const qeo_state_change_reader_t *reader,
-                                                   uintptr_t userdata);
+    uintptr_t userdata);
 
 /**
  * Called when a data instance has been removed. Note that this call will
@@ -376,30 +376,30 @@ typedef void (*qeo_state_on_no_more_data_callback)(const qeo_state_change_reader
  * \param[in] userdata Opaque user data as provided during reader creation.
  */
 typedef void (*qeo_state_on_remove_callback)(const qeo_state_change_reader_t *reader,
-                                             const void *data,
-                                             uintptr_t userdata);
+    const void *data,
+    uintptr_t userdata);
 
 /**
  * \copydoc ::qeo_event_reader_on_policy_update_callback
  */
 typedef qeo_policy_perm_t (*qeo_state_change_reader_on_policy_update_callback)(const qeo_state_change_reader_t *reader,
-                                                                               const qeo_policy_identity_t *identity,
-                                                                               uintptr_t userdata);
+    const qeo_policy_identity_t *identity,
+    uintptr_t userdata);
 
 /**
  * State change reader listener callback structure.  Upon reception of new data
  * the appropriate callbacks (if provided) will be called.
  */
 typedef struct {
-    qeo_state_on_data_callback on_data; /**< see ::qeo_state_on_data_callback */
-    qeo_state_on_no_more_data_callback on_no_more_data; /**< see ::qeo_state_on_no_more_data_callback */
-    qeo_state_on_remove_callback on_remove; /**< see ::qeo_state_on_remove_callback */
-    qeo_state_change_reader_on_policy_update_callback on_policy_update; /**< see ::qeo_state_change_reader_on_policy_update_callback */
+  qeo_state_on_data_callback on_data; /**< see ::qeo_state_on_data_callback */
+  qeo_state_on_no_more_data_callback on_no_more_data; /**< see ::qeo_state_on_no_more_data_callback */
+  qeo_state_on_remove_callback on_remove; /**< see ::qeo_state_on_remove_callback */
+  qeo_state_change_reader_on_policy_update_callback on_policy_update; /**< see ::qeo_state_change_reader_on_policy_update_callback */
 } qeo_state_change_reader_listener_t;
 
 /**
  * Create a new Qeo state change reader for the given type.
- * 
+ *
  * \param[in] factory  The factory to be used for creating the reader.
  * \param[in] type     The type for which to create the reader (non-\c NULL).
  * \param[in] listener The listener to use for data reception notifications
@@ -414,9 +414,9 @@ typedef struct {
  * \see ::qeo_state_change_reader_close
  */
 qeo_state_change_reader_t *qeo_factory_create_state_change_reader(const qeo_factory_t *factory,
-                                                                  const DDS_TypeSupport_meta *type,
-                                                                  const qeo_state_change_reader_listener_t *listener,
-                                                                  uintptr_t userdata);
+    const DDS_TypeSupport_meta *type,
+    const qeo_state_change_reader_listener_t *listener,
+    uintptr_t userdata);
 
 /**
  * Closes the reader, relinquishing any underlying resources.
@@ -450,15 +450,15 @@ typedef struct qeo_state_writer_s qeo_state_writer_t;
  * \copydoc ::qeo_event_writer_on_policy_update_callback
  */
 typedef qeo_policy_perm_t (*qeo_state_writer_on_policy_update_callback)(const qeo_state_writer_t *writer,
-                                                                        const qeo_policy_identity_t *identity,
-                                                                        uintptr_t userdata);
+    const qeo_policy_identity_t *identity,
+    uintptr_t userdata);
 
 /**
  * State writer listener callback structure.  Upon reception of policy updates
  * the appropriate callbacks (if provided) will be called.
  */
 typedef struct {
-    qeo_state_writer_on_policy_update_callback on_policy_update; /**< see ::qeo_state_writer_on_policy_update_callback */
+  qeo_state_writer_on_policy_update_callback on_policy_update; /**< see ::qeo_state_writer_on_policy_update_callback */
 } qeo_state_writer_listener_t;
 
 
@@ -476,9 +476,9 @@ typedef struct {
  * \see ::qeo_state_writer_close
  */
 qeo_state_writer_t *qeo_factory_create_state_writer(const qeo_factory_t *factory,
-                                                    const DDS_TypeSupport_meta *type,
-                                                    const qeo_state_writer_listener_t *listener,
-                                                    uintptr_t userdata);
+    const DDS_TypeSupport_meta *type,
+    const qeo_state_writer_listener_t *listener,
+    uintptr_t userdata);
 
 /**
  * Closes the writer, relinquishing any underlying resources.

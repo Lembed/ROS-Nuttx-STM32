@@ -1,7 +1,7 @@
 /*
    	Copyright 2014 Open Source Robotics Foundation, Inc.
 	Apache License Version 2.0
-		
+
 		Coded by Víctor Mayoral Vilches.
  */
 
@@ -22,7 +22,7 @@
 
 static DDS_DynamicType Vector3_type;
 
-/* Vector3_type_new -- Create Vector3_t type support data.  If errors occur, it 
+/* Vector3_type_new -- Create Vector3_t type support data.  If errors occur, it
 		       returns NULL.  Otherwise the returned type support data
 		       can be registered in any domain. */
 
@@ -82,8 +82,7 @@ DDS_DynamicTypeSupport Vector3_type_new (void)
 
 		/* Create a Typesupport package from the type. */
 		ts = DDS_DynamicTypeSupport_create_type_support (Vector3_type);
-	}
-	while (0);
+	} while (0);
 
 	if (md)
 		DDS_MemberDescriptor__free (md);
@@ -108,7 +107,7 @@ void Vector3_type_free (DDS_DynamicTypeSupport ts)
 /* Vector3_register -- Register a Vector3 in the DataWriter. */
 
 DDS_InstanceHandle_t Vector3_register (DDS_DynamicDataWriter  dw,
-				       Vector3_t              *data)
+                                       Vector3_t              *data)
 {
 	DDS_DynamicData	d;
 	DDS_ReturnCode_t rc;
@@ -135,8 +134,7 @@ DDS_InstanceHandle_t Vector3_register (DDS_DynamicDataWriter  dw,
 		*/
 
 		h = DDS_DynamicDataWriter_register_instance (dw, d);
-	}
-	while (0);
+	} while (0);
 	DDS_DynamicDataFactory_delete_data (d);
 	return (h);
 }
@@ -144,8 +142,8 @@ DDS_InstanceHandle_t Vector3_register (DDS_DynamicDataWriter  dw,
 /* Vector3_write -- Write a message on the dynamic type writer. */
 
 DDS_ReturnCode_t Vector3_write (DDS_DynamicDataWriter  dw,
-				Vector3_t              *data,
-				DDS_InstanceHandle_t   h)
+                                Vector3_t              *data,
+                                DDS_InstanceHandle_t   h)
 {
 	DDS_DynamicData	d;
 	DDS_ReturnCode_t rc;
@@ -168,8 +166,7 @@ DDS_ReturnCode_t Vector3_write (DDS_DynamicDataWriter  dw,
 			break;
 
 		rc = DDS_DynamicDataWriter_write (dw, d, h);
-	}
-	while (0);
+	} while (0);
 
 	DDS_DynamicDataFactory_delete_data (d);
 	return (rc);
@@ -178,8 +175,8 @@ DDS_ReturnCode_t Vector3_write (DDS_DynamicDataWriter  dw,
 /* Vector3_signal -- Indicate a vector3 signal on the dynamic type writer. */
 
 DDS_ReturnCode_t Vector3_signal (DDS_DynamicDataWriter  dw,
-				 DDS_InstanceHandle_t   h,
-				 int                    unreg)
+                                 DDS_InstanceHandle_t   h,
+                                 int                    unreg)
 {
 	DDS_ReturnCode_t rc;
 
@@ -203,13 +200,13 @@ static DDS_ReturnCode_t get_double (DDS_DynamicData d, double *s, DDS_MemberId i
 /* Vector3_read -- Dynamically read a Vector3_t data item. */
 
 DDS_ReturnCode_t Vector3_read_or_take (DDS_DynamicDataReader dr,
-				       Vector3_t             *data,
-				       DDS_SampleStateMask   ss,
-				       DDS_ViewStateMask     vs,
-				       DDS_InstanceStateMask is,
-				       int                   take,
-				       int                   *valid,
-				       DDS_InstanceStateKind *kind)
+                                       Vector3_t             *data,
+                                       DDS_SampleStateMask   ss,
+                                       DDS_ViewStateMask     vs,
+                                       DDS_InstanceStateMask is,
+                                       int                   take,
+                                       int                   *valid,
+                                       DDS_InstanceStateKind *kind)
 {
 	DDS_DynamicData		d;
 	DDS_ReturnCode_t	rc;
@@ -243,8 +240,7 @@ DDS_ReturnCode_t Vector3_read_or_take (DDS_DynamicDataReader dr,
 			rc = DDS_DynamicDataReader_get_key_value (dr, d, info->instance_handle);
 			if (rc)
 				fatal ("Can't get key value of instance!");
-		}
-		else {
+		} else {
 			d = DDS_SEQ_ITEM (rx_sample, 0);
 			if (!d) {
 				rc = DDS_RETCODE_NO_DATA;
@@ -265,8 +261,7 @@ DDS_ReturnCode_t Vector3_read_or_take (DDS_DynamicDataReader dr,
 		if (rc)
 			break;
 
-	}
-	while (0);
+	} while (0);
 
 	DDS_DynamicDataReader_return_loan (dr, &rx_sample, &rx_info);
 	return (DDS_RETCODE_OK);

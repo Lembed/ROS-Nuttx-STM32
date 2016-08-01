@@ -1,6 +1,6 @@
 FROM ubuntu:14.04
+LABEL Description="Docker for nuttx"
 
-LABEL Description="Docker for arm-gcc-embedded projects"
 
 RUN dpkg-divert --local --rename --add /sbin/initctl
 RUN ln -sf /bin/true /sbin/initctl
@@ -22,7 +22,8 @@ RUN dpkg --add-architecture i386 && \
     make git \
     sudo curl less vim-tiny tree openssh-server
 
-RUN apt-get install -y libxml2-dev pkg-config picocom screen libusb-1.0-0-dev autotools-dev autoconf gperf flex bison libncurses5-dev libtool
+RUN apt-get install -y lrzsz zip
+RUN apt-get install -y libxml2-dev pkg-config picocom screen libusb-1.0-0-dev autotools-dev autoconf gperf flex bison libncurses5-dev libtool zlib1g-dev build-essential
 RUN apt-get install -y --force-yes gcc-arm-none-eabi=$TOOLCHAIN_VERSION 
 RUN apt-get install -y  cmake  make  automake  python-setuptools  ninja-build  python-dev  libffi-dev  libssl-dev  software-properties-common python-software-properties
 RUN apt-get -y upgrade
@@ -39,3 +40,5 @@ EXPOSE 22
 
 ENV ROS_WORKSPACE /home/ros/workspace
 VOLUME ${ROS_WORKSPACE}
+
+VOLUME /dev/bus/usb:/dev/bus/usb
