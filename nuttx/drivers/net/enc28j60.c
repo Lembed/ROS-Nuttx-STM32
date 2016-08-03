@@ -213,8 +213,7 @@
 
 /* The state of the interface */
 
-enum enc_state_e
-{
+enum enc_state_e {
   ENCSTATE_UNINIT = 0,                /* The interface is in an uninitialized state */
   ENCSTATE_DOWN,                      /* The interface is down */
   ENCSTATE_UP                         /* The interface is up */
@@ -224,8 +223,7 @@ enum enc_state_e
  * interface
  */
 
-struct enc_driver_s
-{
+struct enc_driver_s {
   /* Device control */
 
   uint8_t               ifstate;       /* Interface state:  See ENCSTATE_* */
@@ -287,14 +285,14 @@ static inline void enc_unlock(FAR struct enc_driver_s *priv);
 
 static uint8_t enc_rdgreg2(FAR struct enc_driver_s *priv, uint8_t cmd);
 static void enc_wrgreg2(FAR struct enc_driver_s *priv, uint8_t cmd,
-         uint8_t wrdata);
+                        uint8_t wrdata);
 static inline void enc_src(FAR struct enc_driver_s *priv);
 static void enc_setbank(FAR struct enc_driver_s *priv, uint8_t bank);
 static uint8_t enc_rdbreg(FAR struct enc_driver_s *priv, uint8_t ctrlreg);
 static void enc_wrbreg(FAR struct enc_driver_s *priv, uint8_t ctrlreg,
-         uint8_t wrdata);
+                       uint8_t wrdata);
 static int enc_waitbreg(FAR struct enc_driver_s *priv, uint8_t ctrlreg,
-         uint8_t bits, uint8_t value);
+                        uint8_t bits, uint8_t value);
 
 #if 0 /* Sometimes useful */
 static void enc_rxdump(FAR struct enc_driver_s *priv);
@@ -304,15 +302,15 @@ static void enc_txdump(FAR struct enc_driver_s *priv);
 /* SPI buffer transfers */
 
 static void enc_rdbuffer(FAR struct enc_driver_s *priv, FAR uint8_t *buffer,
-         size_t buflen);
+                         size_t buflen);
 static inline void enc_wrbuffer(FAR struct enc_driver_s *priv,
-         FAR const uint8_t *buffer, size_t buflen);
+                                FAR const uint8_t *buffer, size_t buflen);
 
 /* PHY register access */
 
 static uint16_t enc_rdphy(FAR struct enc_driver_s *priv, uint8_t phyaddr);
 static void enc_wrphy(FAR struct enc_driver_s *priv, uint8_t phyaddr,
-         uint16_t phydata);
+                      uint16_t phydata);
 
 /* Common TX logic */
 
@@ -610,23 +608,21 @@ static void enc_setbank(FAR struct enc_driver_s *priv, uint8_t bank)
 {
   /* Check if the bank setting has changed*/
 
-  if (bank != priv->bank)
-    {
-      /* Select bank 0 (just so that all of the bits are cleared) */
+  if (bank != priv->bank) {
+    /* Select bank 0 (just so that all of the bits are cleared) */
 
-      enc_bfcgreg(priv, ENC_ECON1, ECON1_BSEL_MASK);
+    enc_bfcgreg(priv, ENC_ECON1, ECON1_BSEL_MASK);
 
-      /* Then OR in bits to get the correct bank */
+    /* Then OR in bits to get the correct bank */
 
-      if (bank != 0)
-        {
-          enc_bfsgreg(priv, ENC_ECON1, (bank << ECON1_BSEL_SHIFT));
-        }
-
-      /* Then remember the bank setting */
-
-      priv->bank = bank;
+    if (bank != 0) {
+      enc_bfsgreg(priv, ENC_ECON1, (bank << ECON1_BSEL_SHIFT));
     }
+
+    /* Then remember the bank setting */
+
+    priv->bank = bank;
+  }
 }
 
 /****************************************************************************
@@ -666,14 +662,13 @@ static uint8_t enc_rdbreg(FAR struct enc_driver_s *priv, uint8_t ctrlreg)
    */
 
   (void)SPI_SEND(priv->spi, ENC_RCR | GETADDR(ctrlreg)); /* Clock out the command */
-  if (ISPHYMAC(ctrlreg))
-    {
-      /* The PHY/MAC sequence requires 24-clocks:  8 to clock out the cmd,
-       * 8 dummy bits, and 8 to clock in the PHY/MAC data.
-       */
+  if (ISPHYMAC(ctrlreg)) {
+    /* The PHY/MAC sequence requires 24-clocks:  8 to clock out the cmd,
+     * 8 dummy bits, and 8 to clock in the PHY/MAC data.
+     */
 
-      (void)SPI_SEND(priv->spi, 0); /* Clock in the dummy byte */
-    }
+    (void)SPI_SEND(priv->spi, 0); /* Clock in the dummy byte */
+  }
 
   rddata = SPI_SEND(priv->spi, 0);  /* Clock in the data */
 
@@ -759,14 +754,12 @@ static int enc_waitbreg(FAR struct enc_driver_s *priv, uint8_t ctrlreg,
 
   /* Loop until the exit condition is met */
 
-  do
-    {
-      /* Read the byte from the requested banked register */
+  do {
+    /* Read the byte from the requested banked register */
 
-      rddata  = enc_rdbreg(priv, ctrlreg);
-      elapsed = clock_systimer() - start;
-    }
-  while ((rddata & bits) != value && elapsed < ENC_POLLTIMEOUT);
+    rddata  = enc_rdbreg(priv, ctrlreg);
+    elapsed = clock_systimer() - start;
+  } while ((rddata & bits) != value && elapsed < ENC_POLLTIMEOUT);
 
   return (rddata & bits) == value ? OK : -ETIMEDOUT;
 }
@@ -965,7 +958,7 @@ static inline void enc_wrbuffer(FAR struct enc_driver_s *priv,
    */
 
   SPI_SELECT(priv->spi, SPIDEV_ETHERNET, false);
-  enc_bmdump(ENC_WBM, buffer, buflen+1);
+  enc_bmdump(ENC_WBM, buffer, buflen + 1);
 }
 
 /****************************************************************************
@@ -1012,19 +1005,18 @@ static uint16_t enc_rdphy(FAR struct enc_driver_s *priv, uint8_t phyaddr)
    */
 
   up_udelay(12);
-  if (enc_waitbreg(priv, ENC_MISTAT, MISTAT_BUSY, 0x00) == OK)
-    {
-      /* 4. Clear the MICMD.MIIRD bit. */
+  if (enc_waitbreg(priv, ENC_MISTAT, MISTAT_BUSY, 0x00) == OK) {
+    /* 4. Clear the MICMD.MIIRD bit. */
 
-      enc_wrbreg(priv, ENC_MICMD, 0x00);
+    enc_wrbreg(priv, ENC_MICMD, 0x00);
 
-      /* 5. Read the desired data from the MIRDL and MIRDH registers. The
-       *    order that these bytes are accessed is unimportant."
-       */
+    /* 5. Read the desired data from the MIRDL and MIRDH registers. The
+     *    order that these bytes are accessed is unimportant."
+     */
 
-      data  = (uint16_t)enc_rdbreg(priv, ENC_MIRDL);
-      data |= (uint16_t)enc_rdbreg(priv, ENC_MIRDH) << 8;
-    }
+    data  = (uint16_t)enc_rdbreg(priv, ENC_MIRDL);
+    data |= (uint16_t)enc_rdbreg(priv, ENC_MIRDH) << 8;
+  }
 
   return data;
 }
@@ -1198,15 +1190,14 @@ static int enc_txpoll(struct net_driver_s *dev)
    */
 
   nllvdbg("Poll result: d_len=%d\n", priv->dev.d_len);
-  if (priv->dev.d_len > 0)
-    {
-      arp_out(&priv->dev);
-      enc_transmit(priv);
+  if (priv->dev.d_len > 0) {
+    arp_out(&priv->dev);
+    enc_transmit(priv);
 
-      /* Stop the poll now because we can queue only one packet */
+    /* Stop the poll now because we can queue only one packet */
 
-      return -EBUSY;
-    }
+    return -EBUSY;
+  }
 
   /* If zero is returned, the polling will continue until all connections have
    * been examined.
@@ -1265,10 +1256,9 @@ static void enc_txif(FAR struct enc_driver_s *priv)
 
 #ifdef CONFIG_ENC28J60_STATS
   priv->stats.txifs++;
-  if (enc_rdgreg(priv, ENC_ESTAT) & ESTAT_TXABRT)
-    {
-      priv->stats.txabrts++;
-    }
+  if (enc_rdgreg(priv, ENC_ESTAT) & ESTAT_TXABRT) {
+    priv->stats.txabrts++;
+  }
 #endif
 
   /* Clear the request to send bit */
@@ -1374,46 +1364,40 @@ static void enc_rxerif(FAR struct enc_driver_s *priv)
 
 static void enc_rxdispatch(FAR struct enc_driver_s *priv)
 {
- /* We only accept IP packets of the configured type and ARP packets */
+  /* We only accept IP packets of the configured type and ARP packets */
 
 #ifdef CONFIG_NET_IPv6
   if (BUF->type == HTONS(ETHTYPE_IP6))
 #else
   if (BUF->type == HTONS(ETHTYPE_IP))
 #endif
-    {
-      nllvdbg("IP packet received (%02x)\n", BUF->type);
-      arp_ipin(&priv->dev);
-      devif_input(&priv->dev);
+  {
+    nllvdbg("IP packet received (%02x)\n", BUF->type);
+    arp_ipin(&priv->dev);
+    devif_input(&priv->dev);
 
-      /* If the above function invocation resulted in data that should be
-       * sent out on the network, the field  d_len will set to a value > 0.
-       */
+    /* If the above function invocation resulted in data that should be
+     * sent out on the network, the field  d_len will set to a value > 0.
+     */
 
-      if (priv->dev.d_len > 0)
-        {
-          arp_out(&priv->dev);
-          enc_transmit(priv);
-        }
+    if (priv->dev.d_len > 0) {
+      arp_out(&priv->dev);
+      enc_transmit(priv);
     }
-  else if (BUF->type == htons(ETHTYPE_ARP))
-    {
-      nllvdbg("ARP packet received (%02x)\n", BUF->type);
-      arp_arpin(&priv->dev);
+  } else if (BUF->type == htons(ETHTYPE_ARP)) {
+    nllvdbg("ARP packet received (%02x)\n", BUF->type);
+    arp_arpin(&priv->dev);
 
-      /* If the above function invocation resulted in data that should be
-       * sent out on the network, the field  d_len will set to a value > 0.
-       */
+    /* If the above function invocation resulted in data that should be
+     * sent out on the network, the field  d_len will set to a value > 0.
+     */
 
-       if (priv->dev.d_len > 0)
-         {
-           enc_transmit(priv);
-         }
-     }
-  else
-    {
-      nlldbg("Unsupported packet type dropped (%02x)\n", htons(BUF->type));
+    if (priv->dev.d_len > 0) {
+      enc_transmit(priv);
     }
+  } else {
+    nlldbg("Unsupported packet type dropped (%02x)\n", htons(BUF->type));
+  }
 }
 
 /****************************************************************************
@@ -1477,44 +1461,41 @@ static void enc_pktif(FAR struct enc_driver_s *priv)
 
   /* Check if the packet was received OK */
 
-  if ((rxstat & RXSTAT_OK) == 0)
-    {
-      nlldbg("ERROR: RXSTAT: %04x\n", rxstat);
+  if ((rxstat & RXSTAT_OK) == 0) {
+    nlldbg("ERROR: RXSTAT: %04x\n", rxstat);
 #ifdef CONFIG_ENC28J60_STATS
-      priv->stats.rxnotok++;
+    priv->stats.rxnotok++;
 #endif
-    }
+  }
 
   /* Check for a usable packet length (4 added for the CRC) */
 
-  else if (pktlen > (CONFIG_NET_BUFSIZE + 4) || pktlen <= (NET_LL_HDRLEN + 4))
-    {
-      nlldbg("Bad packet size dropped (%d)\n", pktlen);
+  else if (pktlen > (CONFIG_NET_BUFSIZE + 4) || pktlen <= (NET_LL_HDRLEN + 4)) {
+    nlldbg("Bad packet size dropped (%d)\n", pktlen);
 #ifdef CONFIG_ENC28J60_STATS
-      priv->stats.rxpktlen++;
+    priv->stats.rxpktlen++;
 #endif
-    }
+  }
 
   /* Otherwise, read and process the packet */
 
-  else
-    {
-      /* Save the packet length (without the 4 byte CRC) in priv->dev.d_len*/
+  else {
+    /* Save the packet length (without the 4 byte CRC) in priv->dev.d_len*/
 
-      priv->dev.d_len = pktlen - 4;
+    priv->dev.d_len = pktlen - 4;
 
-      /* Copy the data data from the receive buffer to priv->dev.d_buf.
-       * ERDPT should be correctly positioned from the last call to to
-       * end_rdbuffer (above).
-       */
+    /* Copy the data data from the receive buffer to priv->dev.d_buf.
+     * ERDPT should be correctly positioned from the last call to to
+     * end_rdbuffer (above).
+     */
 
-      enc_rdbuffer(priv, priv->dev.d_buf, priv->dev.d_len);
-      enc_dumppacket("Received Packet", priv->dev.d_buf, priv->dev.d_len);
+    enc_rdbuffer(priv, priv->dev.d_buf, priv->dev.d_len);
+    enc_dumppacket("Received Packet", priv->dev.d_buf, priv->dev.d_len);
 
-      /* Dispatch the packet to uIP */
+    /* Dispatch the packet to uIP */
 
-      enc_rxdispatch(priv);
-    }
+    enc_rxdispatch(priv);
+  }
 
   /* Move the RX read pointer to the start of the next received packet.
    * This frees the memory we just read.
@@ -1523,7 +1504,7 @@ static void enc_pktif(FAR struct enc_driver_s *priv)
   enc_wrbreg(priv, ENC_ERXRDPTL, (priv->nextpkt));
   enc_wrbreg(priv, ENC_ERXRDPTH, (priv->nextpkt) >> 8);
 
- /* Decrement the packet counter indicate we are done with this packet */
+  /* Decrement the packet counter indicate we are done with this packet */
 
   enc_bfsgreg(priv, ENC_ECON2, ECON2_PKTDEC);
 }
@@ -1574,171 +1555,163 @@ static void enc_irqworker(FAR void *arg)
    * we are just broken.
    */
 
-  while ((eir = enc_rdgreg(priv, ENC_EIR) & EIR_ALLINTS) != 0)
+  while ((eir = enc_rdgreg(priv, ENC_EIR) & EIR_ALLINTS) != 0) {
+    /* Handle interrupts according to interrupt register register bit
+     * settings.
+     */
+
+    nllvdbg("EIR: %02x\n", eir);
+
+    /* DMAIF: The DMA interrupt indicates that the DMA module has completed
+     * its memory copy or checksum calculation. Additionally, this interrupt
+     * will be caused if the host controller cancels a DMA operation by
+     * manually clearing the DMAST bit. Once set, DMAIF can only be cleared
+     * by the host controller or by a Reset condition.
+     */
+
+    if ((eir & EIR_DMAIF) != 0) { /* DMA interrupt */
+      /* Not used by this driver. Just clear the interrupt request. */
+
+      enc_bfcgreg(priv, ENC_EIR, EIR_DMAIF);
+    }
+
+    /* LINKIF: The LINKIF indicates that the link status has changed.
+     * The actual current link status can be obtained from the
+     * PHSTAT1.LLSTAT or PHSTAT2.LSTAT. Unlike other interrupt sources, the
+     * link status change interrupt is created in the integrated PHY
+     * module.
+     *
+     * To receive it, the host controller must set the PHIE.PLNKIE and
+     * PGEIE bits. After setting the two PHY interrupt enable bits, the
+     * LINKIF bit will then shadow the contents of the PHIR.PGIF bit.
+     *
+     * Once LINKIF is set, it can only be cleared by the host controller or
+     * by a Reset. The LINKIF bit is read-only. Performing an MII read on
+     * the PHIR register will clear the LINKIF, PGIF and PLNKIF bits
+     * automatically and allow for future link status change interrupts.
+     */
+
+    if ((eir & EIR_LINKIF) != 0) { /* Link change interrupt */
+      enc_linkstatus(priv);       /* Get current link status */
+      enc_rdphy(priv, ENC_PHIR);  /* Clear the LINKIF interrupt */
+    }
+
+    /* TXIF: The Transmit Interrupt Flag (TXIF) is used to indicate that
+     * the requested packet transmission has ended. Upon transmission
+     * completion, abort or transmission cancellation by the host
+     * controller, the EIR.TXIF flag will be set to 1.
+     *
+     * Once TXIF is set, it can only be cleared by the host controller
+     * or by a Reset condition. Once processed, the host controller should
+     * use the BFC command to clear the EIR.TXIF bit.
+     */
+
+    if ((eir & EIR_TXIF) != 0) { /* Transmit interrupt */
+      enc_txif(priv);                       /* Handle TX completion */
+      enc_bfcgreg(priv, ENC_EIR, EIR_TXIF); /* Clear the TXIF interrupt */
+    }
+
+    /* TXERIF: The Transmit Error Interrupt Flag (TXERIF) is used to
+     * indicate that a transmit abort has occurred. An abort can occur
+     * because of any of the following:
+     *
+     * 1. Excessive collisions occurred as defined by the Retransmission
+     *    Maximum (RETMAX) bits in the MACLCON1 register.
+     * 2. A late collision occurred as defined by the Collision Window
+     *   (COLWIN) bits in the MACLCON2 register.
+     * 3. A collision after transmitting 64 bytes occurred (ESTAT.LATECOL
+     *    set).
+     * 4. The transmission was unable to gain an opportunity to transmit
+     *    the packet because the medium was constantly occupied for too long.
+     *    The deferral limit (2.4287 ms) was reached and the MACON4.DEFER bit
+     *    was clear.
+     * 5. An attempt to transmit a packet larger than the maximum frame
+     *    length defined by the MAMXFL registers was made without setting
+     *    the MACON3.HFRMEN bit or per packet POVERRIDE and PHUGEEN bits.
+     *
+     * Upon any of these conditions, the EIR.TXERIF flag is set to 1. Once
+     * set, it can only be cleared by the host controller or by a Reset
+     * condition.
+     *
+     * After a transmit abort, the TXRTS bit will be cleared, the
+     * ESTAT.TXABRT bit will be set and the transmit status vector will be
+     * written at ETXND + 1. The MAC will not automatically attempt to
+     * retransmit the packet. The host controller may wish to read the
+     * transmit status vector and LATECOL bit to determine the cause of
+     * the abort. After determining the problem and solution, the host
+     * controller should clear the LATECOL (if set) and TXABRT bits so
+     * that future aborts can be detected accurately.
+     *
+     * In Full-Duplex mode, condition 5 is the only one that should cause
+     * this interrupt. Collisions and other problems related to sharing
+     * the network are not possible on full-duplex networks. The conditions
+     * which cause the transmit error interrupt meet the requirements of the
+     * transmit interrupt. As a result, when this interrupt occurs, TXIF
+     * will also be simultaneously set.
+     */
+
+    if ((eir & EIR_TXERIF) != 0) { /* Transmit Error Interrupts */
+      enc_txerif(priv);                       /* Handle the TX error */
+      enc_bfcgreg(priv, ENC_EIR, EIR_TXERIF); /* Clear the TXERIF interrupt */
+    }
+
+    /* PKTIF The Receive Packet Pending Interrupt Flag (PKTIF) is used to
+     * indicate the presence of one or more data packets in the receive
+     * buffer and to provide a notification means for the arrival of new
+     * packets. When the receive buffer has at least one packet in it,
+     * EIR.PKTIF will be set. In other words, this interrupt flag will be
+     * set anytime the Ethernet Packet Count register (EPKTCNT) is non-zero.
+     *
+     * The PKTIF bit can only be cleared by the host controller or by a Reset
+     * condition. In order to clear PKTIF, the EPKTCNT register must be
+     * decremented to 0. If the last data packet in the receive buffer is
+     * processed, EPKTCNT will become zero and the PKTIF bit will automatically
+     * be cleared.
+     */
+
+    /* Ignore PKTIF because is unreliable. Use EPKTCNT instead */
+    /* if ((eir & EIR_PKTIF) != 0) */
     {
-      /* Handle interrupts according to interrupt register register bit
-       * settings.
-       */
-
-      nllvdbg("EIR: %02x\n", eir);
-
-      /* DMAIF: The DMA interrupt indicates that the DMA module has completed
-       * its memory copy or checksum calculation. Additionally, this interrupt
-       * will be caused if the host controller cancels a DMA operation by
-       * manually clearing the DMAST bit. Once set, DMAIF can only be cleared
-       * by the host controller or by a Reset condition.
-       */
-
-      if ((eir & EIR_DMAIF) != 0) /* DMA interrupt */
-        {
-          /* Not used by this driver. Just clear the interrupt request. */
-
-          enc_bfcgreg(priv, ENC_EIR, EIR_DMAIF);
-        }
-
-      /* LINKIF: The LINKIF indicates that the link status has changed.
-       * The actual current link status can be obtained from the
-       * PHSTAT1.LLSTAT or PHSTAT2.LSTAT. Unlike other interrupt sources, the
-       * link status change interrupt is created in the integrated PHY
-       * module.
-       *
-       * To receive it, the host controller must set the PHIE.PLNKIE and
-       * PGEIE bits. After setting the two PHY interrupt enable bits, the
-       * LINKIF bit will then shadow the contents of the PHIR.PGIF bit.
-       *
-       * Once LINKIF is set, it can only be cleared by the host controller or
-       * by a Reset. The LINKIF bit is read-only. Performing an MII read on
-       * the PHIR register will clear the LINKIF, PGIF and PLNKIF bits
-       * automatically and allow for future link status change interrupts.
-       */
-
-      if ((eir & EIR_LINKIF) != 0) /* Link change interrupt */
-        {
-          enc_linkstatus(priv);       /* Get current link status */
-          enc_rdphy(priv, ENC_PHIR);  /* Clear the LINKIF interrupt */
-        }
-
-      /* TXIF: The Transmit Interrupt Flag (TXIF) is used to indicate that
-       * the requested packet transmission has ended. Upon transmission
-       * completion, abort or transmission cancellation by the host
-       * controller, the EIR.TXIF flag will be set to 1.
-       *
-       * Once TXIF is set, it can only be cleared by the host controller
-       * or by a Reset condition. Once processed, the host controller should
-       * use the BFC command to clear the EIR.TXIF bit.
-       */
-
-      if ((eir & EIR_TXIF) != 0) /* Transmit interrupt */
-        {
-          enc_txif(priv);                       /* Handle TX completion */
-          enc_bfcgreg(priv, ENC_EIR, EIR_TXIF); /* Clear the TXIF interrupt */
-        }
-
-      /* TXERIF: The Transmit Error Interrupt Flag (TXERIF) is used to
-       * indicate that a transmit abort has occurred. An abort can occur
-       * because of any of the following:
-       *
-       * 1. Excessive collisions occurred as defined by the Retransmission
-       *    Maximum (RETMAX) bits in the MACLCON1 register.
-       * 2. A late collision occurred as defined by the Collision Window
-       *   (COLWIN) bits in the MACLCON2 register.
-       * 3. A collision after transmitting 64 bytes occurred (ESTAT.LATECOL
-       *    set).
-       * 4. The transmission was unable to gain an opportunity to transmit
-       *    the packet because the medium was constantly occupied for too long.
-       *    The deferral limit (2.4287 ms) was reached and the MACON4.DEFER bit
-       *    was clear.
-       * 5. An attempt to transmit a packet larger than the maximum frame
-       *    length defined by the MAMXFL registers was made without setting
-       *    the MACON3.HFRMEN bit or per packet POVERRIDE and PHUGEEN bits.
-       *
-       * Upon any of these conditions, the EIR.TXERIF flag is set to 1. Once
-       * set, it can only be cleared by the host controller or by a Reset
-       * condition.
-       *
-       * After a transmit abort, the TXRTS bit will be cleared, the
-       * ESTAT.TXABRT bit will be set and the transmit status vector will be
-       * written at ETXND + 1. The MAC will not automatically attempt to
-       * retransmit the packet. The host controller may wish to read the
-       * transmit status vector and LATECOL bit to determine the cause of
-       * the abort. After determining the problem and solution, the host
-       * controller should clear the LATECOL (if set) and TXABRT bits so
-       * that future aborts can be detected accurately.
-       *
-       * In Full-Duplex mode, condition 5 is the only one that should cause
-       * this interrupt. Collisions and other problems related to sharing
-       * the network are not possible on full-duplex networks. The conditions
-       * which cause the transmit error interrupt meet the requirements of the
-       * transmit interrupt. As a result, when this interrupt occurs, TXIF
-       * will also be simultaneously set.
-       */
-
-      if ((eir & EIR_TXERIF) != 0) /* Transmit Error Interrupts */
-        {
-          enc_txerif(priv);                       /* Handle the TX error */
-          enc_bfcgreg(priv, ENC_EIR, EIR_TXERIF); /* Clear the TXERIF interrupt */
-        }
-
-      /* PKTIF The Receive Packet Pending Interrupt Flag (PKTIF) is used to
-       * indicate the presence of one or more data packets in the receive
-       * buffer and to provide a notification means for the arrival of new
-       * packets. When the receive buffer has at least one packet in it,
-       * EIR.PKTIF will be set. In other words, this interrupt flag will be
-       * set anytime the Ethernet Packet Count register (EPKTCNT) is non-zero.
-       *
-       * The PKTIF bit can only be cleared by the host controller or by a Reset
-       * condition. In order to clear PKTIF, the EPKTCNT register must be
-       * decremented to 0. If the last data packet in the receive buffer is
-       * processed, EPKTCNT will become zero and the PKTIF bit will automatically
-       * be cleared.
-       */
-
-      /* Ignore PKTIF because is unreliable. Use EPKTCNT instead */
-      /* if ((eir & EIR_PKTIF) != 0) */
-        {
-          uint8_t pktcnt = enc_rdbreg(priv, ENC_EPKTCNT);
-          if (pktcnt > 0)
-            {
-              nllvdbg("EPKTCNT: %02x\n", pktcnt);
+      uint8_t pktcnt = enc_rdbreg(priv, ENC_EPKTCNT);
+      if (pktcnt > 0) {
+        nllvdbg("EPKTCNT: %02x\n", pktcnt);
 
 #ifdef CONFIG_ENC28J60_STATS
-              if (pktcnt > priv->stats.maxpktcnt)
-                {
-                  priv->stats.maxpktcnt = pktcnt;
-                }
+        if (pktcnt > priv->stats.maxpktcnt) {
+          priv->stats.maxpktcnt = pktcnt;
+        }
 #endif
-              /* Handle packet receipt */
+        /* Handle packet receipt */
 
-              enc_pktif(priv);
-            }
-        }
-
-      /* RXERIF: The Receive Error Interrupt Flag (RXERIF) is used to
-       * indicate a receive buffer overflow condition. Alternately, this
-       * interrupt may indicate that too many packets are in the receive
-       * buffer and more cannot be stored without overflowing the EPKTCNT
-       * register.  When a packet is being received and the receive buffer
-       * runs completely out of space, or EPKTCNT is 255 and cannot be
-       * incremented, the packet being received will be aborted (permanently
-       * lost) and the EIR.RXERIF bit will be set to 1.
-       *
-       * Once set, RXERIF can only be cleared by the host controller or by a
-       * Reset condition. Normally, upon the receive error condition, the
-       * host controller would process any packets pending from the receive
-       * buffer and then make additional room for future packets by
-       * advancing the ERXRDPT registers (low byte first) and decrementing
-       * the EPKTCNT register.
-       *
-       * Once processed, the host controller should use the BFC command to
-       * clear the EIR.RXERIF bit.
-       */
-
-      if ((eir & EIR_RXERIF) != 0) /* Receive Errror Interrupts */
-        {
-          enc_rxerif(priv);                       /* Handle the RX error */
-          enc_bfcgreg(priv, ENC_EIR, EIR_RXERIF); /* Clear the RXERIF interrupt */
-        }
+        enc_pktif(priv);
+      }
     }
+
+    /* RXERIF: The Receive Error Interrupt Flag (RXERIF) is used to
+     * indicate a receive buffer overflow condition. Alternately, this
+     * interrupt may indicate that too many packets are in the receive
+     * buffer and more cannot be stored without overflowing the EPKTCNT
+     * register.  When a packet is being received and the receive buffer
+     * runs completely out of space, or EPKTCNT is 255 and cannot be
+     * incremented, the packet being received will be aborted (permanently
+     * lost) and the EIR.RXERIF bit will be set to 1.
+     *
+     * Once set, RXERIF can only be cleared by the host controller or by a
+     * Reset condition. Normally, upon the receive error condition, the
+     * host controller would process any packets pending from the receive
+     * buffer and then make additional room for future packets by
+     * advancing the ERXRDPT registers (low byte first) and decrementing
+     * the EPKTCNT register.
+     *
+     * Once processed, the host controller should use the BFC command to
+     * clear the EIR.RXERIF bit.
+     */
+
+    if ((eir & EIR_RXERIF) != 0) { /* Receive Errror Interrupts */
+      enc_rxerif(priv);                       /* Handle the RX error */
+      enc_bfcgreg(priv, ENC_EIR, EIR_RXERIF); /* Clear the RXERIF interrupt */
+    }
+  }
 
   /* Enable GPIO interrupts */
 
@@ -1922,15 +1895,14 @@ static void enc_pollworker(FAR void *arg)
    * ECON1.TXRTS bit will be cleared.
    */
 
-  if ((enc_rdgreg(priv, ENC_ECON1) & ECON1_TXRTS) == 0)
-    {
-      /* Yes.. update TCP timing states and poll uIP for new XMIT data. Hmmm..
-       * looks like a bug here to me.  Does this mean if there is a transmit
-       * in progress, we will missing TCP time state updates?
-       */
+  if ((enc_rdgreg(priv, ENC_ECON1) & ECON1_TXRTS) == 0) {
+    /* Yes.. update TCP timing states and poll uIP for new XMIT data. Hmmm..
+     * looks like a bug here to me.  Does this mean if there is a transmit
+     * in progress, we will missing TCP time state updates?
+     */
 
-      (void)devif_timer(&priv->dev, enc_txpoll, ENC_POLLHSEC);
-    }
+    (void)devif_timer(&priv->dev, enc_txpoll, ENC_POLLHSEC);
+  }
 
   /* Release lock on the SPI bus and uIP */
 
@@ -2005,7 +1977,7 @@ static int enc_ifup(struct net_driver_s *dev)
 
   nlldbg("Bringing up: %d.%d.%d.%d\n",
          dev->d_ipaddr & 0xff, (dev->d_ipaddr >> 8) & 0xff,
-        (dev->d_ipaddr >> 16) & 0xff, dev->d_ipaddr >> 24 );
+         (dev->d_ipaddr >> 16) & 0xff, dev->d_ipaddr >> 24 );
 
   /* Lock the SPI bus so that we have exclusive access */
 
@@ -2016,35 +1988,34 @@ static int enc_ifup(struct net_driver_s *dev)
    */
 
   ret = enc_reset(priv);
-  if (ret == OK)
-    {
-      enc_setmacaddr(priv);
-      enc_pwrfull(priv);
+  if (ret == OK) {
+    enc_setmacaddr(priv);
+    enc_pwrfull(priv);
 
-      /* Enable interrupts at the ENC28J60.  Interrupts are still disabled
-       * at the interrupt controller.
-       */
+    /* Enable interrupts at the ENC28J60.  Interrupts are still disabled
+     * at the interrupt controller.
+     */
 
-      enc_wrphy(priv, ENC_PHIE, PHIE_PGEIE | PHIE_PLNKIE);
-      enc_bfcgreg(priv, ENC_EIR, EIR_ALLINTS);
-      enc_wrgreg(priv, ENC_EIE, EIE_INTIE  | EIE_PKTIE  | EIE_LINKIE |
-                                EIE_TXIE   | EIE_TXERIE | EIE_RXERIE);
+    enc_wrphy(priv, ENC_PHIE, PHIE_PGEIE | PHIE_PLNKIE);
+    enc_bfcgreg(priv, ENC_EIR, EIR_ALLINTS);
+    enc_wrgreg(priv, ENC_EIE, EIE_INTIE  | EIE_PKTIE  | EIE_LINKIE |
+               EIE_TXIE   | EIE_TXERIE | EIE_RXERIE);
 
-      /* Enable the receiver */
+    /* Enable the receiver */
 
-      enc_bfsgreg(priv, ENC_ECON1, ECON1_RXEN);
+    enc_bfsgreg(priv, ENC_ECON1, ECON1_RXEN);
 
-      /* Set and activate a timer process */
+    /* Set and activate a timer process */
 
-      (void)wd_start(priv->txpoll, ENC_WDDELAY, enc_polltimer, 1, (uint32_t)priv);
+    (void)wd_start(priv->txpoll, ENC_WDDELAY, enc_polltimer, 1, (uint32_t)priv);
 
-      /* Mark the interface up and enable the Ethernet interrupt at the
-       * controller
-       */
+    /* Mark the interface up and enable the Ethernet interrupt at the
+     * controller
+     */
 
-      priv->ifstate = ENCSTATE_UP;
-      priv->lower->enable(priv->lower);
-    }
+    priv->ifstate = ENCSTATE_UP;
+    priv->lower->enable(priv->lower);
+  }
 
   /* Un-lock the SPI bus */
 
@@ -2137,21 +2108,19 @@ static int enc_txavail(struct net_driver_s *dev)
   /* Ignore the notification if the interface is not yet up */
 
   flags = irqsave();
-  if (priv->ifstate == ENCSTATE_UP)
-    {
-      /* Check if the hardware is ready to send another packet.  The driver
-       * starts a transmission process by setting ECON1.TXRTS. When the packet is
-       * finished transmitting or is aborted due to an error/cancellation, the
-       * ECON1.TXRTS bit will be cleared.
-       */
+  if (priv->ifstate == ENCSTATE_UP) {
+    /* Check if the hardware is ready to send another packet.  The driver
+     * starts a transmission process by setting ECON1.TXRTS. When the packet is
+     * finished transmitting or is aborted due to an error/cancellation, the
+     * ECON1.TXRTS bit will be cleared.
+     */
 
-      if ((enc_rdgreg(priv, ENC_ECON1) & ECON1_TXRTS) == 0)
-        {
-          /* The interface is up and TX is idle; poll uIP for new XMIT data */
+    if ((enc_rdgreg(priv, ENC_ECON1) & ECON1_TXRTS) == 0) {
+      /* The interface is up and TX is idle; poll uIP for new XMIT data */
 
-          (void)devif_poll(&priv->dev, enc_txpoll);
-        }
+      (void)devif_poll(&priv->dev, enc_txpoll);
     }
+  }
 
   /* Un-lock the SPI bus */
 
@@ -2281,21 +2250,20 @@ static void enc_pwrsave(FAR struct enc_driver_s *priv)
    *    polling ESTAT.RXBUSY. This bit should be clear before proceeding.
    */
 
-  if (enc_waitbreg(priv, ENC_ESTAT, ESTAT_RXBUSY, 0) == OK)
-    {
-      /* 3. Wait for any current transmissions to end by confirming
-       * ECON1.TXRTS is clear.
-       */
+  if (enc_waitbreg(priv, ENC_ESTAT, ESTAT_RXBUSY, 0) == OK) {
+    /* 3. Wait for any current transmissions to end by confirming
+     * ECON1.TXRTS is clear.
+     */
 
-      enc_waitbreg(priv, ENC_ECON1, ECON1_TXRTS, 0);
+    enc_waitbreg(priv, ENC_ECON1, ECON1_TXRTS, 0);
 
-      /* 4. Set ECON2.VRPS (if not already set). */
-      /* enc_bfsgreg(priv, ENC_ECON2, ECON2_VRPS); <-- Set in enc_reset() */
+    /* 4. Set ECON2.VRPS (if not already set). */
+    /* enc_bfsgreg(priv, ENC_ECON2, ECON2_VRPS); <-- Set in enc_reset() */
 
-      /* 5. Enter Sleep by setting ECON2.PWRSV. */
+    /* 5. Enter Sleep by setting ECON2.PWRSV. */
 
-      enc_bfsgreg(priv, ENC_ECON2, ECON2_PWRSV);
-    }
+    enc_bfsgreg(priv, ENC_ECON2, ECON2_PWRSV);
+  }
 }
 
 /****************************************************************************
@@ -2457,11 +2425,10 @@ static int enc_reset(FAR struct enc_driver_s *priv)
    */
 
   regval = enc_rdbreg(priv, ENC_EREVID);
-  if (regval == 0x00 || regval == 0xff)
-    {
-      nlldbg("Bad Rev ID: %02x\n", regval);
-      return -ENODEV;
-    }
+  if (regval == 0x00 || regval == 0xff) {
+    nlldbg("Bad Rev ID: %02x\n", regval);
+    return -ENODEV;
+  }
 
   nllvdbg("Rev ID: %02x\n", regval);
 
@@ -2557,7 +2524,7 @@ int enc_initialize(FAR struct spi_dev_s *spi,
 
   /* Initialize the driver structure */
 
-  memset(g_enc28j60, 0, CONFIG_ENC28J60_NINTERFACES*sizeof(struct enc_driver_s));
+  memset(g_enc28j60, 0, CONFIG_ENC28J60_NINTERFACES * sizeof(struct enc_driver_s));
   priv->dev.d_ifup    = enc_ifup;     /* I/F down callback */
   priv->dev.d_ifdown  = enc_ifdown;   /* I/F up (new IP address) callback */
   priv->dev.d_txavail = enc_txavail;  /* New TX data callback */
@@ -2586,12 +2553,11 @@ int enc_initialize(FAR struct spi_dev_s *spi,
 
   /* Attach the interrupt to the driver (but don't enable it yet) */
 
-  if (lower->attach(lower, enc_interrupt))
-    {
-      /* We could not attach the ISR to the interrupt */
+  if (lower->attach(lower, enc_interrupt)) {
+    /* We could not attach the ISR to the interrupt */
 
-      return -EAGAIN;
-    }
+    return -EAGAIN;
+  }
 
   /* Register the device with the OS so that socket IOCTLs can be performed */
 

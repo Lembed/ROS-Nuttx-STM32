@@ -1,6 +1,10 @@
 ## ROS Nuttx STM32
 -------------
 
+[![ros-nuttx-stm32](https://img.shields.io/badge/build-passing-blue.svg)]()
+[![license](https://img.shields.io/badge/license-NewBSD-blue.svg)]()
+[![ros-nuttx-stm32](https://img.shields.io/badge/platform-embedded-blue.svg)]()
+
 ROS 2.0 for embedded systems using NuttX, Tinq and the STM32F4 IC with follow modular blocks:
 
 ```
@@ -63,7 +67,6 @@ make
 - **NxWidgets**: a special graphical user interface.
 - **rcl**: ROS 2 Client Library (Ros Client Library) for embedded.
 - **README.md**: this file.
-- **ros2_embedded.\***: Sublime text configuration files.
 - **tools**: a set of useful tools for development.
 
 
