@@ -41,11 +41,11 @@ struct in_addr 				addr;
 const char					*progname;
 char						chatroom [64] = "DDS";		/* Chatroom name. */
 char						user_name [64];				/* User name. */
-unsigned					domain_id= 0;				/* Domain identifier. */
+unsigned					domain_id = 0;				/* Domain identifier. */
 int							verbose = 0;
 thread_t					rt;
 
-/* 
+/*
 	Initizalize the ROS 2 client library for embedded
 
 		the code basically configures the network interface
@@ -69,8 +69,8 @@ void rcl_init(void) /* equivalent to init() */
 	/* subnet mask */
 	addr.s_addr = HTONL(CONFIG_EXAMPLES_UDP_NETMASK);
 	netlib_setnetmask("eth0", &addr);
-	
-	if (verbose)	
+
+	if (verbose)
 		printf("rcl init()\n");
 }
 
@@ -97,8 +97,8 @@ void create_node(void)
 		printf ("create_node() DDS Domain Participant created.\r\n");
 }
 
-/*	
-	Creates a Publisher and a DataWriter within the Domain participant at the 
+/*
+	Creates a Publisher and a DataWriter within the Domain participant at the
 	topics created previously by init_types().
 
 	- Return:
@@ -154,7 +154,7 @@ void publish(char* text_to_publish)
 
 	if (!h)
 		h = ChatMsg_register (dw, &m);
-	m.message = buf;	
+	m.message = buf;
 	ChatMsg_write (dw, &m, h);
 }
 
@@ -197,7 +197,7 @@ void delete_publisher(void)
 		printf ("delete_publisher() DDS message writer deleted.\r\n");
 }
 
-/* 
+/*
 	Deletes the domain participant and the rest of the entities that
 	it contains.
 */
@@ -207,9 +207,9 @@ void delete_node(void)
 	if (verbose)
 		printf ("delete_node() DDS Entities deleted (error = %u).\r\n", error);
 
-	delete_types();	
+	delete_types();
 	if (verbose)
-		printf ("delete_node() types deleted.\r\n");	
+		printf ("delete_node() types deleted.\r\n");
 
 	error = DDS_DomainParticipantFactory_delete_participant (part);
 	if (verbose)
@@ -219,13 +219,13 @@ void delete_node(void)
 /*
 	Initialize the dynamic types to be used within RCL
 		NOTE THAT THIS PROTOTYPE HARDCODES THIS INITIALIZATION USING
-		DDS PRIMITIVES. IN FUTURE PROTOTYPES AN ABSTRACTION LAYER 
+		DDS PRIMITIVES. IN FUTURE PROTOTYPES AN ABSTRACTION LAYER
 		SIMILAR TO THE ROS INTERFACES SHOULD BE CODED.
 
 		Note also that ts, error, topic and td are global variables that should
 		be populated.
 */
-#include "aux/chat_msg.h"		
+#include "aux/chat_msg.h"
 void init_types(void)
 {
 	ts = ChatMsg_type_new ();
@@ -253,7 +253,7 @@ void init_types(void)
 	if (!td) {
 		printf ("Can't get topicdescription.\r\n");
 		exit (1);
-	}	
+	}
 }
 
 /*
